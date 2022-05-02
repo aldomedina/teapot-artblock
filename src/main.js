@@ -29,7 +29,8 @@ class Main {
     loop = new Loop(camera, scene, renderer)
     document.body.appendChild(renderer.domElement)
 
-    const controls = createControls(camera, renderer.domElement)
+    // const controls = createControls(camera, renderer.domElement)
+    const controls = createControls(camera, renderer, scene, isTutorial)
 
     // ANIMATION SETTINGS
     if (isTutorial) {
