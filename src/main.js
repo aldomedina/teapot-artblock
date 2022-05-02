@@ -10,10 +10,11 @@ import { createTeapot } from './components/teapot'
 import { randomInteger } from './utils'
 import { colors, createPalette } from './components/color'
 import { createBgSphere } from './components/bgSphere'
+import { createControls } from './components/controls/createControls'
 
 let camera, renderer, scene, loop, palette
 
-const isTutorial = true
+const isTutorial = false
 
 class Main {
   constructor() {
@@ -28,18 +29,18 @@ class Main {
     loop = new Loop(camera, scene, renderer)
     document.body.appendChild(renderer.domElement)
 
-    // ELEMENTS
+    const controls = createControls(camera, renderer.domElement)
 
     // ANIMATION SETTINGS
     if (isTutorial) {
       const cube = createCube()
       const lights = createLights()
-      loop.updatables.push(cube)
+      loop.updatables.push(cube, controls)
       scene.add(cube, lights)
     } else {
       const teapot = createTeapot(palette)
       const bgSphere = createBgSphere(palette)
-      loop.updatables.push(teapot, bgSphere)
+      loop.updatables.push(teapot, bgSphere, controls)
       scene.add(teapot, bgSphere)
     }
 
