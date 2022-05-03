@@ -1,10 +1,14 @@
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { downloadFile } from '../../utils'
 
 function createListItem(coordinates) {
+  const { x: tx, y: ty, z: tz } = coordinates.target
+  const { x: px, y: py, z: pz } = coordinates.position
+
   let li = document.createElement('li')
   li.innerHTML = `
-  <strong>target:</strong> ${coordinates.target.x}, ${coordinates.target.y}, ${coordinates.target.z} <br>
-  <strong>position:</strong> ${coordinates.position.x}, ${coordinates.position.y}, ${coordinates.position.z}
+  <strong>target:</strong> ${tx}, ${ty}, ${tz} <br>
+  <strong>position:</strong> ${cx}, ${cy}, ${cz}
   `
   return li
 }
@@ -23,27 +27,7 @@ function createControls(camera, renderer, scene, isTutorial) {
           button.classList.add('button')
           button.innerText = 'Download JSON'
           button.onclick = function () {
-            const blob = new Blob([JSON.stringify(coordinatesArray)], {
-              type: 'text/json',
-            })
-            const link = document.createElement('a')
-
-            link.download = 'coordinates.json'
-            link.href = window.URL.createObjectURL(blob)
-            link.dataset.downloadurl = [
-              'text/json',
-              link.download,
-              link.href,
-            ].join(':')
-
-            const evt = new MouseEvent('click', {
-              view: window,
-              bubbles: true,
-              cancelable: true,
-            })
-
-            link.dispatchEvent(evt)
-            link.remove()
+            downloadFile('coordinates.json', JSON.stringify(coordinatesArray))
           }
           document.body.appendChild(button)
         }
