@@ -1,7 +1,6 @@
 import { PerspectiveCamera } from 'three'
-import getCameraPoisition from './getCameraPosition'
 
-function createCamera() {
+function createCamera(cameraPosition) {
   const wW = window.innerWidth
   const wH = window.innerHeight
   const camera = new PerspectiveCamera(
@@ -11,11 +10,14 @@ function createCamera() {
     1000 // far clipping plane
   )
 
-  // camera.position.set(0, 0, 5)
-  const { position, lookingAt } = getCameraPoisition()
-  camera.position.set(position.x, position.y, position.z)
-  camera.lookAt(lookingAt.x, lookingAt.y, lookingAt.z)
-  console.log(camera.position)
+  if (cameraPosition) {
+    const { position, lookingAt } = cameraPosition
+    camera.position.set(position.x, position.y, position.z)
+    camera.lookAt(lookingAt.x, lookingAt.y, lookingAt.z)
+  } else {
+    camera.position.set(0, 0, 5)
+  }
+
   return camera
 }
 

@@ -1,8 +1,8 @@
-import { randomInteger, rgb } from '../../utils'
+import { rgb } from '../../utils'
 import colors from './colors'
 
-const createPalette = (index) => {
-  const [col1, col2] = colors[index]
+const createPalette = (R) => {
+  const [col1, col2] = R.random_choice(colors)
 
   return {
     col1: rgb(col1[0], col1[1], col1[2]),

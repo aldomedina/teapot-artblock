@@ -35,5 +35,17 @@ const cameraPositions = [
       z: -6.231011224683043,
     },
   },
+  {
+    position: {
+      x: 0,
+      y: 0,
+      z: 200,
+    },
+    lookingAt: {
+      x: 0,
+      y: 0,
+      z: 0,
+    },
+  },
 ]
 export default cameraPositions

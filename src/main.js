@@ -1,49 +1,43 @@
-import { createCamera } from './components/camera'
-import { createCube } from './components/cube'
-import { createScene } from './components/scene'
-import { createLights } from './components/lights.js'
-
 import { createRenderer } from './system/renderer'
-import { Resizer } from './system/Resizer.js'
-import { Loop } from './system/Loop.js'
+import { Resizer } from './system/Resizer'
+import { Loop } from './system/Loop'
+import createConfig from './system/createConfig'
+
+import { createCamera } from './components/camera'
+import { createScene } from './components/scene'
 import { createTeapot } from './components/teapot'
-import { randomInteger } from './utils'
-import { colors, createPalette } from './components/color'
 import { createBgSphere } from './components/bgSphere'
 import { createControls } from './components/controls/createControls'
 
-let camera, renderer, scene, loop, palette
+let camera, renderer, scene, loop, controls
 
-const isTutorial = false
+const isDev = false
 
 class Main {
   constructor() {
     // TO BE UPDATED WITH HASH VARS
-    const randomIndex = randomInteger(0, colors.length - 1)
+    const { palette, cameraPosition, isWired } = createConfig()
 
     // SETTINGS
     renderer = createRenderer()
     scene = createScene()
-    camera = createCamera()
-    palette = createPalette(randomIndex)
+    camera = createCamera(cameraPosition)
     loop = new Loop(camera, scene, renderer)
     document.body.appendChild(renderer.domElement)
 
-    // const controls = createControls(camera, renderer.domElement)
-    const controls = createControls(camera, renderer, scene, isTutorial)
+    // TODO: REMOVE SECTION --- DEV ONLY
+    const updatables = []
+    if (isDev) {
+      controls = createControls(camera, renderer, scene)
+      updatables.push(controls)
+    }
 
     // ANIMATION SETTINGS
-    if (isTutorial) {
-      const cube = createCube()
-      const lights = createLights()
-      loop.updatables.push(cube, controls)
-      scene.add(cube, lights)
-    } else {
-      const teapot = createTeapot(palette)
-      const bgSphere = createBgSphere(palette)
-      loop.updatables.push(teapot, bgSphere, controls)
-      scene.add(teapot, bgSphere)
-    }
+    const teapot = createTeapot(palette, isWired)
+    const bgSphere = createBgSphere(palette)
+    updatables.push(bgSphere, teapot)
+    loop.updatables = [...updatables]
+    scene.add(teapot, bgSphere)
 
     // OTHERS
     new Resizer(camera, renderer)

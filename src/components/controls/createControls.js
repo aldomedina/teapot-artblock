@@ -15,39 +15,38 @@ function createListItem(coordinates) {
 
 const coordinatesArray = []
 const domList = document.getElementById('coordinates-list')
-function createControls(camera, renderer, scene, isTutorial) {
+function createControls(camera, renderer, scene) {
   const controls = new OrbitControls(camera, renderer.domElement)
   controls.enableDamping = true
 
-  !isTutorial &&
-    window.addEventListener('keydown', (e) => {
-      if (e.code === 'KeyP') {
-        if (!coordinatesArray.length) {
-          const button = document.createElement('button')
-          button.classList.add('button')
-          button.innerText = 'Download JSON'
-          button.onclick = function () {
-            downloadFile('coordinates.json', JSON.stringify(coordinatesArray))
-          }
-          document.body.appendChild(button)
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'KeyP') {
+      if (!coordinatesArray.length) {
+        const button = document.createElement('button')
+        button.classList.add('button')
+        button.innerText = 'Download JSON'
+        button.onclick = function () {
+          downloadFile('coordinates.json', JSON.stringify(coordinatesArray))
         }
-
-        const coordinates = {
-          target: controls.target,
-          position: controls.object.position,
-        }
-        coordinatesArray.push(coordinates)
-        domList.appendChild(createListItem(coordinates))
-        // get image
-        const a = document.createElement('a')
-        renderer.render(scene, camera)
-        a.href = renderer.domElement
-          .toDataURL()
-          .replace('image/png', 'image/octet-stream')
-        a.download = `${coordinates.target.x}_${coordinates.target.y}_${coordinates.target.z}____${coordinates.position.x}_${coordinates.position.y}_${coordinates.position.z}.png`
-        a.click()
+        document.body.appendChild(button)
       }
-    })
+
+      const coordinates = {
+        target: controls.target,
+        position: controls.object.position,
+      }
+      coordinatesArray.push(coordinates)
+      domList.appendChild(createListItem(coordinates))
+      // get image
+      const a = document.createElement('a')
+      renderer.render(scene, camera)
+      a.href = renderer.domElement
+        .toDataURL()
+        .replace('image/png', 'image/octet-stream')
+      a.download = `${coordinates.target.x}_${coordinates.target.y}_${coordinates.target.z}____${coordinates.position.x}_${coordinates.position.y}_${coordinates.position.z}.png`
+      a.click()
+    }
+  })
 
   controls.tick = () => {
     controls.update()
