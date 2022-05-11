@@ -11,12 +11,18 @@ import { createControls } from './components/controls/createControls'
 
 let camera, renderer, scene, loop, controls
 
-const isDev = false
+const isDev = true
 
 class Main {
   constructor() {
     // TO BE UPDATED WITH HASH VARS
-    const { palette, cameraPosition, isWired } = createConfig()
+    const {
+      palette,
+      cameraPosition,
+      isWired,
+      bgPallete,
+      isGlass,
+    } = createConfig()
 
     // SETTINGS
     renderer = createRenderer()
@@ -33,7 +39,7 @@ class Main {
     }
 
     // ANIMATION SETTINGS
-    const teapot = createTeapot(palette, isWired)
+    const teapot = createTeapot(palette, isWired, isGlass)
     const bgSphere = createBgSphere(palette)
     updatables.push(bgSphere, teapot)
     loop.updatables = [...updatables]

@@ -7,7 +7,7 @@ function createCamera(cameraPosition) {
     75, // fov = Field Of View
     wW / wH, // aspect ratio (dummy value)
     0.1, // near clipping plane
-    1000 // far clipping plane
+    10000 // far clipping plane
   )
 
   if (cameraPosition) {

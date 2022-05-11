@@ -8,7 +8,7 @@ function createListItem(coordinates) {
   let li = document.createElement('li')
   li.innerHTML = `
   <strong>target:</strong> ${tx}, ${ty}, ${tz} <br>
-  <strong>position:</strong> ${cx}, ${cy}, ${cz}
+  <strong>position:</strong> ${px}, ${py}, ${pz}
   `
   return li
 }

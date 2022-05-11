@@ -5,9 +5,17 @@
 import { ShaderMaterial, DoubleSide } from 'three'
 import { randomisePosition, sNoise } from '../../utils'
 
-function createSNoiseMaterial(color1, color2, color3, color4, isDistorted) {
+function createSNoiseMaterial(
+  color1,
+  color2,
+  color3,
+  color4,
+  isDistorted,
+  wireframe = false
+) {
   return new ShaderMaterial({
     side: DoubleSide,
+    wireframe,
     uniforms: {
       u_bg: { type: 'v3', value: color1 },
       u_bgMain: { type: 'v3', value: color2 },

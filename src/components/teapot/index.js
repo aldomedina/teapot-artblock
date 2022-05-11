@@ -1,5 +1,6 @@
 import { Mesh, MathUtils, Vector2, Vector3 } from 'three'
 import { noiseRGB, randomInteger } from '../../utils'
+import createGlassMaterial from '../materials/createGlassMaterial'
 import { createSNoiseMaterial } from '../materials/createSNoiseMaterial'
 import { createTeapotGeometry } from './createTeapotGeometry'
 
@@ -9,18 +10,23 @@ let j = 0
 let x = randomInteger(0, 32)
 let y = randomInteger(0, 32)
 
-function createTeapot(palette) {
+function createTeapot(palette, isWired, isGLass) {
   const { col1, col2, col3, col4 } = palette
   const geometry = createTeapotGeometry()
-  const material = createSNoiseMaterial(col1, col2, col3, col4, false)
+
+  const material = isGLass
+    ? createGlassMaterial()
+    : createSNoiseMaterial(col1, col2, col3, col4, false, isWired)
 
   const teapot = new Mesh(geometry, material)
 
   teapot.tick = (delta) => {
     const { R, G, B } = noiseRGB(x, y, t / 2)
-    teapot.material.uniforms.u_randomisePosition.value = new Vector2(j, j)
-    teapot.material.uniforms.u_color1.value = new Vector3(R, G, B)
-    teapot.material.uniforms.u_time.value = t
+    if (!isGLass) {
+      teapot.material.uniforms.u_randomisePosition.value = new Vector2(j, j)
+      teapot.material.uniforms.u_color1.value = new Vector3(R, G, B)
+      teapot.material.uniforms.u_time.value = t
+    }
 
     if (t % 0.1 == 0) {
       if (vCheck == false) {
