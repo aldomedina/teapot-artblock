@@ -1,28 +1,41 @@
+// Adaptation of Johnny Simpson Gradient effects tutorial
 // https://javascript.plainenglish.io/making-an-animated-html5-canvas-gradient-effect-62e7f84d7c2f
 // https://github.com/smpnjn/webgl-gradient
 // https://codepen.io/smpnjn/pen/pobGMKp
 
-import { ShaderMaterial, DoubleSide } from 'three'
+import { ShaderMaterial, DoubleSide, Color } from 'three'
 import { randomisePosition, sNoise } from '../../utils'
 
-function createSNoiseMaterial(
-  color1,
-  color2,
-  color3,
-  color4,
-  isDistorted,
-  wireframe = false
+export default function createSNoiseMaterial(
+  palette,
+  wireframe,
+  fixedSize = false
 ) {
+  const { col1, col2, col3, col4 } = palette
   return new ShaderMaterial({
     side: DoubleSide,
     wireframe,
     uniforms: {
-      u_bg: { type: 'v3', value: color1 },
-      u_bgMain: { type: 'v3', value: color2 },
-      u_color1: { type: 'v3', value: color3 },
-      u_color2: { type: 'v3', value: color4 },
+      u_bg: { type: 'v3', value: col1 },
+      u_bgMain: { type: 'v3', value: col1 },
+      u_color1: { type: 'v3', value: col1 },
+      u_color2: { type: 'v3', value: col4 },
       u_time: { type: 'f', value: 30 },
       u_randomisePosition: { type: 'v2', value: randomisePosition },
+      bboxMin: {
+        value: {
+          x: -9.523809432983398,
+          y: -5,
+          z: -6.349206447601318,
+        },
+      },
+      bboxMax: {
+        value: {
+          x: 10.901825904846191,
+          y: 5,
+          z: 6.349206447601318,
+        },
+      },
     },
     vertexShader:
       sNoise +
@@ -32,25 +45,25 @@ function createSNoiseMaterial(
 
       varying float vDistortion;
       varying float xDistortion;
+      uniform vec3 bboxMin;
+      uniform vec3 bboxMax;
+
       varying vec2 vUv;
 
       void main() {
-          vUv = uv;
+         ${
+           fixedSize
+             ? ` 
+              vUv.y = (position.y - bboxMin.y) / (bboxMax.y - bboxMin.y);
+              vUv.x = (position.x - bboxMin.x) / (bboxMax.x - bboxMin.x);`
+             : `
+              vUv = uv;
+             `
+         }
           vec3 pos = position;
-          ${
-            isDistorted
-              ? ` vDistortion = snoise(vUv.xx * 3. - u_randomisePosition * 0.15);
-          xDistortion = snoise(vUv.yy * 1. - u_randomisePosition * 0.05);
-          pos.z += (vDistortion * 35.);
-          pos.x += (xDistortion * 25.);`
-              : ''
-          }
-
-
           gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
       }
 
-      
     `,
     fragmentShader:
       sNoise +
@@ -97,4 +110,68 @@ function createSNoiseMaterial(
   })
 }
 
-export { createSNoiseMaterial }
+// const color1 = [1.0, 0.55, 0]
+// const color2 = [0.226, 0.0, 0.615]
+// export default function createSNoiseMaterial(
+//   palette,
+//   geometry,
+//   wireframe = false
+// ) {
+//   console.log(geometry)
+//   const { col1, col2, col3, col4 } = palette
+//   return new ShaderMaterial({
+//     side: DoubleSide,
+//     wireframe,
+//     uniforms: {
+//       u_bg: { type: 'v3', value: col1 },
+//       u_bgMain: { type: 'v3', value: col1 },
+//       u_color1: { type: 'v3', value: col1 },
+//       u_color2: { type: 'v3', value: col4 },
+//       u_time: { type: 'f', value: 30 },
+//       u_randomisePosition: { type: 'v2', value: randomisePosition },
+//       bboxMin: {
+//         value: {
+//           x: -9.523809432983398,
+//           y: -5,
+//           z: -6.349206447601318,
+//         },
+//       },
+//       bboxMax: {
+//         value: {
+//           x: 10.901825904846191,
+//           y: 5,
+//           z: 6.349206447601318,
+//         },
+//       },
+//       color1: {
+//         value: new Color('red'),
+//       },
+//       color2: {
+//         value: new Color('purple'),
+//       },
+//     },
+//     vertexShader: `
+
+//     uniform vec3 bboxMin;
+//     uniform vec3 bboxMax;
+
+//     varying vec2 vUv;
+
+//     void main() {
+//       vUv.y = (position.y - bboxMin.y) / (bboxMax.y - bboxMin.y);
+//       gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+//     }
+//     `,
+//     fragmentShader: `
+//     uniform vec3 color1;
+//     uniform vec3 color2;
+
+//     varying vec2 vUv;
+
+//     void main() {
+
+//       gl_FragColor = vec4(mix(color1, color2, vUv.y), 1.0);
+//     }
+//       `,
+//   })
+// }

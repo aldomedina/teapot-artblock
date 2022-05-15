@@ -1,7 +1,6 @@
-import { Mesh, MathUtils, Vector2, Vector3 } from 'three'
+import { Mesh, MathUtils, Vector2, Vector3, Box3 } from 'three'
 import { noiseRGB, randomInteger } from '../../utils'
-import createGlassMaterial from '../materials/createGlassMaterial'
-import { createSNoiseMaterial } from '../materials/createSNoiseMaterial'
+import getMaterial from '../materials/getMaterial'
 import { createTeapotGeometry } from './createTeapotGeometry'
 
 let vCheck = false
@@ -10,19 +9,23 @@ let j = 0
 let x = randomInteger(0, 32)
 let y = randomInteger(0, 32)
 
-function createTeapot(palette, isWired, isGLass) {
-  const { col1, col2, col3, col4 } = palette
-  const geometry = createTeapotGeometry()
-
-  const material = isGLass
-    ? createGlassMaterial()
-    : createSNoiseMaterial(col1, col2, col3, col4, false, isWired)
-
+function createTeapot(camera, palette, teapotMaterial) {
+  const geometry = createTeapotGeometry(teapotMaterial)
+  const material = getMaterial(
+    teapotMaterial,
+    palette,
+    teapotMaterial === 'wired'
+  )
   const teapot = new Mesh(geometry, material)
+  teapot.castShadow = true
+  teapot.receiveShadow = true
+  const fov_y =
+    (camera.position.z * camera.getFilmHeight()) / camera.getFocalLength()
+  teapot.position.z = -fov_y / 2
 
-  teapot.tick = (delta) => {
+  teapot.tick = () => {
     const { R, G, B } = noiseRGB(x, y, t / 2)
-    if (!isGLass) {
+    if (teapotMaterial === 'noise' || teapotMaterial === 'wired') {
       teapot.material.uniforms.u_randomisePosition.value = new Vector2(j, j)
       teapot.material.uniforms.u_color1.value = new Vector3(R, G, B)
       teapot.material.uniforms.u_time.value = t

@@ -1,6 +1,6 @@
 import { Mesh, SphereBufferGeometry, Vector2, Vector3 } from 'three'
 import { noiseRGB, randomInteger } from '../../utils'
-import { createSNoiseMaterial } from '../materials/createSNoiseMaterial'
+import createSNoiseMaterial from '../materials/createSNoiseMaterial'
 
 let vCheck = false
 let t = 0
@@ -9,9 +9,8 @@ let x = randomInteger(0, 32)
 let y = randomInteger(0, 32)
 
 function createBgSphere(palette) {
-  const { col1, col2, col3, col4 } = palette
   const geometry = new SphereBufferGeometry(800, 32, 32)
-  const material = createSNoiseMaterial(col1, col2, col3, col4, false)
+  const material = createSNoiseMaterial(palette, false, false)
 
   geometry.scale(-1, 1, 1)
   const sphere = new Mesh(geometry, material)

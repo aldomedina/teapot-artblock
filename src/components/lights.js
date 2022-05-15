@@ -1,13 +1,27 @@
-import { DirectionalLight } from 'three'
+import {
+  DirectionalLight,
+  AmbientLight,
+  HemisphereLight,
+  PointLight,
+} from 'three'
 
-function createLights() {
-  // Create a directional light
-  const light = new DirectionalLight('white', 8)
+// RectAreaLight -> simulate window
+// PointLight -> simulate lightbulb
 
-  // move the light right, up, and towards us
-  light.position.set(10, 10, 10)
+function createLights(cam) {
+  const fov_y = (cam.position.z * cam.getFilmHeight()) / cam.getFocalLength()
 
-  return light
+  const mainLight = new PointLight(0xffffff, 25.5)
+  mainLight.castShadow = true
+  mainLight.shadowCameraVisible = true
+  mainLight.shadow.mapSize.width = 1024
+  mainLight.shadow.mapSize.height = 1024
+  mainLight.position.z = -fov_y / 2
+  mainLight.position.y = fov_y / 2 - 4
+
+  const ambientLight = new AmbientLight('#0c0c0c', 5)
+
+  return { ambientLight, mainLight }
 }
 
 export { createLights }

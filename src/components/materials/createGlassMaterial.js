@@ -1,13 +1,13 @@
 import { DoubleSide } from 'three'
 import { MeshPhysicalMaterial, Texture, RepeatWrapping } from 'three'
-import normalB64 from './normalB64'
+import normalB64 from './base64/normalB64'
 
 export default function createGlassMaterial() {
   const image = new Image()
   image.src = normalB64
-
-  let texture = new Texture()
+  const texture = new Texture()
   texture.image = image
+
   image.onload = function () {
     texture.needsUpdate = true
   }
@@ -15,7 +15,7 @@ export default function createGlassMaterial() {
   texture.wrapT = RepeatWrapping
   const material = new MeshPhysicalMaterial({
     transmission: 1.3,
-    roughness: 0.4,
+    roughness: 0.5,
     thickness: 20,
     reflectivity: 0.4,
     side: DoubleSide,

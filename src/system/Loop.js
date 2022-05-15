@@ -1,6 +1,7 @@
 import { Clock } from 'three'
 
 const clock = new Clock()
+let cameraCopy = {}
 
 class Loop {
   constructor(camera, scene, renderer) {
@@ -30,7 +31,7 @@ class Loop {
     // );
 
     for (const object of this.updatables) {
-      object.tick(delta)
+      object.tick(delta, this.camera)
     }
   }
 }
